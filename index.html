@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111a32">
+  <title>小さな宇宙空間VR ― 惑星に囲まれる世界 ―</title>
+  <style>
+    :root { color-scheme: dark; background: #080e20; }
+    html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; }
+    body { font-family: system-ui, sans-serif; }
+    a-scene { position: fixed !important; inset: 0; }
+    .a-canvas { touch-action: none; }
+    #setup {
+      position: fixed;
+      z-index: 2;
+      bottom: max(16px, env(safe-area-inset-bottom));
+      left: max(16px, env(safe-area-inset-left));
+      right: max(16px, env(safe-area-inset-right));
+      display: grid;
+      justify-items: center;
+      gap: 8px;
+      pointer-events: none;
+      text-align: center;
+    }
+    #setup[hidden], #setup [hidden] { display: none; }
+    #start {
+      border: 1px solid #78849d;
+      border-radius: 4px;
+      padding: 10px 16px;
+      font: inherit;
+      color: #fff;
+      background: #1b253a;
+      pointer-events: auto;
+    }
+    #status {
+      margin: 0;
+      max-width: 34rem;
+      padding: 5px 9px;
+      color: #fff;
+      background: #1b253a;
+      font-size: 0.875rem;
+    }
+  </style>
+  <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
+</head>
+<body>
+  <div id="setup">
+    <button id="start" type="button" hidden>VRを開始</button>
+    <p id="status" role="status">宇宙空間を読み込み中…</p>
+  </div>
+  <noscript>この作品を表示するには JavaScript を有効にしてください。</noscript>
+
+  <a-scene
+    renderer="antialias: auto; alpha: false; maxCanvasWidth: 1600; maxCanvasHeight: 1200"
+    xr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false"
+    loading-screen="enabled: false"
+    keyboard-shortcuts="enterVR: false">
+
+    <!-- 画像のidを、下にある球のsrcで指定する。 -->
+    <a-assets>
+      <a-mixin id="planet" geometry="segmentsWidth: 32; segmentsHeight: 20" material="roughness: 1"></a-mixin>
+      <img id="sun-texture" src="assets/sun(1).jpg">
+      <img id="sun-halo-image" src="assets/sun-glow.png">
+      <img id="earth-texture" src="assets/earth.jpg">
+      <img id="mars-texture" src="assets/mars.jpg">
+      <img id="saturn-texture" src="assets/saturn.jpg">
+      <img id="mercury-texture" src="assets/mercury.jpg">
+      <img id="venus-texture" src="assets/venus(1).jpg">
+      <img id="jupiter-texture" src="assets/jupiter.jpg">
+      <a-mixin id="star" geometry="radius: .061; segmentsWidth: 6; segmentsHeight: 4"
+        material="shader: flat; color: #a5b7dc"></a-mixin>
+      <a-mixin id="deck-post" geometry="radius: .029; height: .62; segmentsRadial: 8"
+        material="color: #6b829a; roughness: 1"></a-mixin>
+      <a-mixin id="deck-guide" geometry="width: .31; height: .025; depth: .065"
+        material="shader: flat; color: #719cae"></a-mixin>
+    </a-assets>
+
+    <a-sky color="#080e20" radius="95" segments-width="32" segments-height="16"></a-sky>
+
+    <!-- 小さな球の星を前後左右と頭上に置く。 -->
+    <a-entity id="stars">
+      <a-sphere mixin="star" position="-24 10 -45"></a-sphere>
+      <a-sphere mixin="star" position="-21 -16 -45"></a-sphere>
+      <a-sphere mixin="star" position="-15 23 -49" radius=".09" color="#dce7ff"></a-sphere>
+      <a-sphere mixin="star" position="-13 -4 -51"></a-sphere>
+      <a-sphere mixin="star" position="-7 12 -48"></a-sphere>
+      <a-sphere mixin="star" position="-3 -21 -48" radius=".084" color="#dce7ff"></a-sphere>
+      <a-sphere mixin="star" position="2 24 -49"></a-sphere>
+      <a-sphere mixin="star" position="7 -12 -51"></a-sphere>
+      <a-sphere mixin="star" position="12 13 -53" radius=".09" color="#dce7ff"></a-sphere>
+      <a-sphere mixin="star" position="17 -23 -46"></a-sphere>
+      <a-sphere mixin="star" position="22 5 -50"></a-sphere>
+      <a-sphere mixin="star" position="27 23 -42"></a-sphere>
+      <a-sphere mixin="star" position="31 -8 -39"></a-sphere>
+      <a-sphere mixin="star" position="40 16 -31" radius=".086" color="#dce7ff"></a-sphere>
+      <a-sphere mixin="star" position="49 -21 -17"></a-sphere>
+      <a-sphere mixin="star" position="51 3 -11"></a-sphere>
+      <a-sphere mixin="star" position="48 24 3"></a-sphere>
+      <a-sphere mixin="star" position="51 -8 13" radius=".084" color="#dce7ff"></a-sphere>
+      <a-sphere mixin="star" position="41 13 28"></a-sphere>
+      <a-sphere mixin="star" position="36 -19 36"></a-sphere>
+      <a-sphere mixin="star" position="25 21 44" radius=".09" color="#dce7ff"></a-sphere>
+      <a-sphere mixin="star" position="19 -12 47"></a-sphere>
+      <a-sphere mixin="star" position="9 9 50"></a-sphere>
+      <a-sphere mixin="star" position="5 -23 47"></a-sphere>
+      <a-sphere mixin="star" position="-4 27 47"></a-sphere>
+      <a-sphere mixin="star" position="-11 -11 50" radius=".085" color="#dce7ff"></a-sphere>
+      <a-sphere mixin="star" position="-20 16 48"></a-sphere>
+      <a-sphere mixin="star" position="-29 -23 40"></a-sphere>
+      <a-sphere mixin="star" position="-37 13 32"></a-sphere>
+      <a-sphere mixin="star" position="-48 24 18" radius=".088" color="#dce7ff"></a-sphere>
+      <a-sphere mixin="star" position="-51 -13 14"></a-sphere>
+      <a-sphere mixin="star" position="-54 6 1"></a-sphere>
+      <a-sphere mixin="star" position="-49 -22 -13"></a-sphere>
+      <a-sphere mixin="star" position="-45 16 -22" radius=".088" color="#dce7ff"></a-sphere>
+      <a-sphere mixin="star" position="-36 -3 -37"></a-sphere>
+      <a-sphere mixin="star" position="-30 29 -32"></a-sphere>
+      <a-sphere mixin="star" position="-14 45 -20"></a-sphere>
+      <a-sphere mixin="star" position="6 51 -14" radius=".091" color="#dce7ff"></a-sphere>
+      <a-sphere mixin="star" position="22 43 9"></a-sphere>
+      <a-sphere mixin="star" position="-17 45 18"></a-sphere>
+      <a-sphere mixin="star" position="-14 -47 -18"></a-sphere>
+      <a-sphere mixin="star" position="16 -46 -8"></a-sphere>
+      <a-sphere mixin="star" position="10 -45 28" radius=".086" color="#dce7ff"></a-sphere>
+      <a-sphere mixin="star" position="-25 -42 15"></a-sphere>
+      <a-sphere mixin="star" position="-12 2 -52"></a-sphere>
+      <a-sphere mixin="star" position="14 -9 -49"></a-sphere>
+      <a-sphere mixin="star" position="-27 -24 -43"></a-sphere>
+      <a-sphere mixin="star" position="35 -3 -43"></a-sphere>
+      <a-sphere mixin="star" position="47 11 17"></a-sphere>
+      <a-sphere mixin="star" position="28 -12 46"></a-sphere>
+      <a-sphere mixin="star" position="5 14 52"></a-sphere>
+      <a-sphere mixin="star" position="-21 1 49"></a-sphere>
+      <a-sphere mixin="star" position="-44 -4 27"></a-sphere>
+      <a-sphere mixin="star" position="5 38 -31"></a-sphere>
+      <a-sphere mixin="star" position="-18 3 -62" radius=".051" color="#788eaf"></a-sphere>
+      <a-sphere mixin="star" position="-6 19 -36" radius=".052" color="#859bc0"></a-sphere>
+      <a-sphere mixin="star" position="10 -18 -62" radius=".051" color="#7f93b8"></a-sphere>
+      <a-sphere mixin="star" position="23 15 -42" radius=".073" color="#c3d1ee"></a-sphere>
+      <a-sphere mixin="star" position="44 2 -31" radius=".054" color="#8da1c5"></a-sphere>
+      <a-sphere mixin="star" position="55 -16 8" radius=".048" color="#7387ad"></a-sphere>
+      <a-sphere mixin="star" position="38 20 39"></a-sphere>
+      <a-sphere mixin="star" position="23 -4 59" radius=".049" color="#8298bb"></a-sphere>
+      <a-sphere mixin="star" position="-12 6 40" radius=".083" color="#c4d2f0"></a-sphere>
+      <a-sphere mixin="star" position="-41 -7 43" radius=".054" color="#7d93b4"></a-sphere>
+      <a-sphere mixin="star" position="-44 12 -4"></a-sphere>
+      <a-sphere mixin="star" position="-25 54 7" radius=".048" color="#788db1"></a-sphere>
+    </a-entity>
+
+    <!-- 外側のpositionで天体を置き、内側のrotationだけを変える。 -->
+    <a-entity id="earth" position="0 .62 -9.1" rotation="0 0 -16">
+      <a-sphere mixin="planet" radius="1.65" src="#earth-texture"
+        animation="property: rotation; to: 0 360 0; dur: 110000; easing: linear; loop: true"></a-sphere>
+    </a-entity>
+
+    <a-entity id="mars" position="-7.4 -2.65 -9.45" rotation="0 0 13">
+      <a-sphere mixin="planet" radius="1.14" src="#mars-texture"
+        animation="property: rotation; to: 0 360 0; dur: 97000; easing: linear; loop: true"></a-sphere>
+    </a-entity>
+
+    <!-- 左後方の水星、右後方の金星、左奥の木星。 -->
+    <a-entity id="mercury" position="-7.65 2.7 8.7">
+      <a-sphere mixin="planet" radius=".72" src="#mercury-texture"
+        animation="property: rotation; to: 0 360 0; dur: 120000; easing: linear; loop: true"></a-sphere>
+    </a-entity>
+
+    <a-entity id="venus" position="13.7 -3.15 5.12" rotation="0 0 5">
+      <a-sphere mixin="planet" radius="1.36" src="#venus-texture"
+        animation="property: rotation; to: 0 360 0; dur: 135000; easing: linear; loop: true"></a-sphere>
+    </a-entity>
+
+    <a-entity id="jupiter" position="-15.4 .95 3.35" rotation="0 100 -14">
+      <a-sphere mixin="planet" radius="2.38" src="#jupiter-texture"
+        animation="property: rotation; to: 0 360 0; dur: 130000; easing: linear; loop: true"></a-sphere>
+    </a-entity>
+
+    <!-- 土星の球と輪を同じグループで傾ける。 -->
+    <a-entity id="saturn" position="10.7 3.75 -11.8" rotation="28 0 23">
+      <a-sphere mixin="planet" radius="1.43" src="#saturn-texture"
+        animation="property: rotation; to: 0 360 0; dur: 140000; easing: linear; loop: true"></a-sphere>
+      <a-torus radius="2.05" radius-tubular=".15" segments-radial="8" segments-tubular="48"
+        rotation="90 0 0" scale="1 1 .2" color="#c7b493"></a-torus>
+    </a-entity>
+
+    <!-- 太陽は照明による影をつけず、画像の明るさで表示する。 -->
+    <a-sphere id="sun" mixin="planet" position="1.13 -.97 18.55" radius="4.77"
+      src="#sun-texture" material="shader: flat"
+      animation="property: rotation; to: 0 360 0; dur: 145000; easing: linear; loop: true"></a-sphere>
+
+    <!-- 太陽の中心に、外側ほど透明な光の画像を重ねる。 -->
+    <a-plane id="sun-glow" position="1.13 -.97 18.55" rotation="3 183.5 0"
+      width="12.1" height="12.1" src="#sun-halo-image"
+      material="shader: flat; transparent: true; depthWrite: false"></a-plane>
+
+    <a-light type="ambient" color="#aebfe8" intensity=".83"></a-light>
+    <a-light type="directional" position="1 5 8" color="#fff0d8" intensity="1.55"></a-light>
+
+    <!-- 観測デッキ。カメラの座標は固定したまま、床を足元に置く。 -->
+    <a-entity id="observation-deck" position="0 -1.57 0">
+      <a-cylinder position="0 -.145 0" radius="2.69" height=".27"
+        segments-radial="48" color="#344156"></a-cylinder>
+      <a-cylinder position="0 -.026 0" radius="2.64" height=".052"
+        segments-radial="48" color="#4c5e73"></a-cylinder>
+      <a-ring position="0 .009 0" rotation="-90 0 0" radius-inner="2.41" radius-outer="2.43"
+        segments-theta="48" material="shader: flat; color: #627790"></a-ring>
+
+      <a-torus position="0 .62 0" rotation="90 0 0" radius="2.51" radius-tubular=".015"
+        segments-radial="8" segments-tubular="48" color="#839ab0"></a-torus>
+      <a-cylinder mixin="deck-post" position="2.51 .31 0"></a-cylinder>
+      <a-cylinder mixin="deck-post" position="1.775 .31 1.775"></a-cylinder>
+      <a-cylinder mixin="deck-post" position="0 .31 2.51"></a-cylinder>
+      <a-cylinder mixin="deck-post" position="-1.775 .31 1.775"></a-cylinder>
+      <a-cylinder mixin="deck-post" position="-2.51 .31 0"></a-cylinder>
+      <a-cylinder mixin="deck-post" position="-1.775 .31 -1.775"></a-cylinder>
+      <a-cylinder mixin="deck-post" position="0 .31 -2.51"></a-cylinder>
+      <a-cylinder mixin="deck-post" position="1.775 .31 -1.775"></a-cylinder>
+
+      <a-box mixin="deck-guide" position="0 .014 -2.23"></a-box>
+      <a-box mixin="deck-guide" position="0 .014 2.23"></a-box>
+      <a-box mixin="deck-guide" position="2.23 .014 0" rotation="0 90 0"></a-box>
+      <a-box mixin="deck-guide" position="-2.23 .014 0" rotation="0 90 0"></a-box>
+      <a-light type="point" position="0 .36 -2.23" color="#92becc" intensity=".12" distance="1.2" decay="2"></a-light>
+    </a-entity>
+
+    <!-- 17.4秒待ち、2.6秒で正面の遠くを通る。終了イベントで待ち時間に戻る。 -->
+    <a-entity id="passing-light" position="-20 15 -49" scale="0 0 0"
+      animation__wait="property: scale; from: 0 0 0; to: 0 0 0; dur: 17400; easing: linear; startEvents: loaded, animationcomplete__pass"
+      animation__pass="property: position; from: -20 15 -49; to: 19 17.6 -49; dur: 2600; easing: linear; startEvents: animationcomplete__wait"
+      animation__appear="property: scale; from: 0 0 0; to: 1 1 1; dur: 350; easing: easeOutQuad; startEvents: animationcomplete__wait"
+      animation__fade="property: scale; from: 1 1 1; to: 0 0 0; delay: 2100; dur: 400; easing: easeInQuad; startEvents: animationcomplete__wait">
+      <a-sphere radius=".12" segments-width="10" segments-height="7"
+        material="shader: flat; color: #c6d9f5"></a-sphere>
+      <a-cone position="-.54 -.036 0" rotation="0 0 94" radius-bottom=".073" height="1.08" segments-radial="8"
+        material="shader: flat; color: #8da9cf; transparent: true; opacity: .38; depthWrite: false"></a-cone>
+    </a-entity>
+
+    <!-- カメラの位置を空間の中央に固定する。 -->
+    <a-entity id="viewer" position="0 0 0" camera="fov: 62; near: .05; far: 120"
+      look-controls="enabled: false" wasd-controls="enabled: false"></a-entity>
+  </a-scene>
+
+  <!-- ここからは視点操作と、Cardboard型ゴーグル向けの左右表示。 -->
+  <script>
+    (() => {
+      const status = document.querySelector('#status')
+      if (!window.AFRAME) {
+        status.textContent = 'A-Frameを読み込めませんでした。通信環境を確認して再読み込みしてください。'
+        return
+      }
+      const THREE = AFRAME.THREE
+      const DEG = Math.PI / 180
+      const clamp = THREE.MathUtils.clamp
+
+      AFRAME.registerComponent('cardboard-view', {
+        init() {
+          this.scene = this.el.sceneEl
+          this.setup = document.querySelector('#setup')
+          this.button = document.querySelector('#start')
+          this.status = status
+          this.handheld = AFRAME.utils.device.isMobile() ||
+            (navigator.maxTouchPoints > 1 && /Mac|iPad|iPhone/.test(navigator.platform))
+          this.landscape = matchMedia('(orientation: landscape)')
+          this.euler = new THREE.Euler(0, 0, 0, 'YXZ')
+          this.sensorPose = new THREE.Quaternion()
+          this.alignment = new THREE.Quaternion()
+          this.screenRotation = new THREE.Quaternion()
+          this.forward = new THREE.Vector3()
+          this.axisY = new THREE.Vector3(0, 1, 0)
+          this.axisZ = new THREE.Vector3(0, 0, 1)
+          this.cameraCorrection = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2)
+          this.stereo = new THREE.StereoCamera()
+          this.stereo.aspect = .5
+          this.stereo.eyeSep = .064
+          this.viewport = new THREE.Vector4()
+          this.scissor = new THREE.Vector4()
+          this.size = new THREE.Vector2()
+          this.yaw = 0
+          this.pitch = 0
+          this.mode = 'mono'
+          this.sensor = null
+          this.heading = null
+          this.pointer = null
+          this.timer = 0
+
+          this.onStart = this.start.bind(this)
+          this.onSensor = event => {
+            if (![event.alpha, event.beta, event.gamma].every(Number.isFinite)) return
+            const firstReading = !this.sensor
+            this.sensor = event
+            if (firstReading) {
+              clearTimeout(this.timer)
+              this.updateDisplay()
+            }
+          }
+          this.onLayout = this.updateDisplay.bind(this)
+          this.onDown = event => {
+            if (this.mode !== 'mono' || !event.isPrimary || event.button !== 0) return
+            this.pointer = { id: event.pointerId, x: event.clientX, y: event.clientY }
+            this.scene.canvas.setPointerCapture(event.pointerId)
+          }
+          this.onMove = event => {
+            if (!this.pointer || this.pointer.id !== event.pointerId || this.mode !== 'mono') return
+            this.yaw += (event.clientX - this.pointer.x) * .004
+            this.pitch = clamp(this.pitch + (event.clientY - this.pointer.y) * .004, -1.5, 1.5)
+            this.pointer.x = event.clientX
+            this.pointer.y = event.clientY
+          }
+          this.onUp = event => {
+            if (this.pointer?.id === event.pointerId) this.pointer = null
+          }
+          this.onReady = this.ready.bind(this)
+          if (this.scene.renderStarted) this.ready()
+          else this.scene.addEventListener('renderstart', this.onReady, { once: true })
+        },
+
+        ready() {
+          const renderer = this.scene.renderer
+          const canvas = this.scene.canvas
+          this.renderSingle = renderer.render
+          renderer.render = (scene, camera) => {
+            if (this.mode !== 'stereo' || scene !== this.scene.object3D || camera !== this.scene.camera) {
+              this.renderSingle.call(renderer, scene, camera)
+              return
+            }
+
+            // A-Frameの描画ループを使い、左右の投影だけを置き換える。
+            camera.updateWorldMatrix(true, false)
+            this.stereo.update(camera)
+            const { x: width, y: height } = renderer.getSize(this.size)
+            const half = Math.floor(width / 2)
+            renderer.getViewport(this.viewport)
+            renderer.getScissor(this.scissor)
+            const oldScissorTest = renderer.getScissorTest()
+
+            renderer.setScissorTest(true)
+            renderer.setViewport(0, 0, half, height)
+            renderer.setScissor(0, 0, half, height)
+            this.renderSingle.call(renderer, scene, this.stereo.cameraL)
+            renderer.setViewport(half, 0, width - half, height)
+            renderer.setScissor(half, 0, width - half, height)
+            this.renderSingle.call(renderer, scene, this.stereo.cameraR)
+
+            renderer.setViewport(this.viewport)
+            renderer.setScissor(this.scissor)
+            renderer.setScissorTest(oldScissorTest)
+          }
+
+          canvas.addEventListener('pointerdown', this.onDown)
+          canvas.addEventListener('pointermove', this.onMove)
+          canvas.addEventListener('pointerup', this.onUp)
+          canvas.addEventListener('pointercancel', this.onUp)
+          canvas.addEventListener('lostpointercapture', this.onUp)
+          this.button.addEventListener('click', this.onStart)
+          this.landscape.addEventListener('change', this.onLayout)
+          this.readyToView = true
+          this.updateDisplay()
+        },
+
+        async start() {
+          this.requested = true
+          this.button.disabled = true
+          const orientation = window.DeviceOrientationEvent
+          if (!window.isSecureContext || !orientation) {
+            this.fallback('センサーを利用できません。HTTPSのSafariで開くか、画面をドラッグしてください。')
+            return
+          }
+          try {
+            if (typeof orientation.requestPermission === 'function') {
+              const permission = await orientation.requestPermission()
+              if (permission !== 'granted') {
+                this.fallback('傾きセンサーが許可されていません。画面をドラッグして見渡せます。')
+                return
+              }
+            }
+          } catch {
+            this.fallback('傾きセンサーを利用できません。画面をドラッグして見渡せます。')
+            return
+          }
+          this.listening = true
+          window.addEventListener('deviceorientation', this.onSensor, { passive: true })
+          this.timer = setTimeout(() => {
+            if (!this.sensor) this.fallback('傾きの情報を受信できませんでした。画面をドラッグして見渡せます。')
+          }, 4500)
+          this.updateDisplay()
+        },
+
+        fallback(message) {
+          clearTimeout(this.timer)
+          window.removeEventListener('deviceorientation', this.onSensor)
+          this.listening = false
+          this.sensor = null
+          this.notice = message
+          this.updateDisplay()
+        },
+
+        updateDisplay() {
+          if (!this.readyToView) return
+          const landscape = this.landscape.matches
+          const stereo = Boolean(this.sensor && landscape)
+          if (stereo && this.mode !== 'stereo') {
+            this.heading = null
+            this.pointer = null
+          }
+          this.mode = stereo ? 'stereo' : 'mono'
+
+          let message = this.notice || ''
+          if (this.listening && !landscape) message = 'スマートフォンを横向きにしてください。'
+          else if (this.listening && !this.sensor) message = '傾きセンサーを確認中…'
+          const showButton = this.handheld && !this.requested
+          this.button.hidden = !showButton
+          this.status.hidden = stereo || !message
+          if (this.status.textContent !== message) this.status.textContent = message
+          this.setup.hidden = stereo || (!showButton && !message)
+        },
+
+        tick() {
+          const object = this.el.object3D
+          if (this.mode !== 'stereo') {
+            object.rotation.set(this.pitch, this.yaw, 0, 'YXZ')
+            return
+          }
+
+          const { alpha, beta, gamma } = this.sensor
+          const angle = typeof window.orientation === 'number'
+            ? window.orientation
+            : (screen.orientation?.angle || 0)
+          this.euler.set(beta * DEG, alpha * DEG, -gamma * DEG, 'YXZ')
+          this.sensorPose.setFromEuler(this.euler).multiply(this.cameraCorrection)
+          this.screenRotation.setFromAxisAngle(this.axisZ, -angle * DEG)
+          this.sensorPose.multiply(this.screenRotation)
+
+          if (this.heading === null) {
+            this.forward.set(0, 0, -1).applyQuaternion(this.sensorPose)
+            if (Math.hypot(this.forward.x, this.forward.z) < .18) return
+            this.heading = Math.atan2(-this.forward.x, -this.forward.z)
+            this.alignment.setFromAxisAngle(this.axisY, this.yaw - this.heading)
+          }
+          object.quaternion.copy(this.alignment).multiply(this.sensorPose)
+        },
+
+        remove() {
+          clearTimeout(this.timer)
+          this.scene.removeEventListener('renderstart', this.onReady)
+          this.button.removeEventListener('click', this.onStart)
+          this.landscape.removeEventListener('change', this.onLayout)
+          window.removeEventListener('deviceorientation', this.onSensor)
+          if (!this.readyToView) return
+          const canvas = this.scene.canvas
+          canvas.removeEventListener('pointerdown', this.onDown)
+          canvas.removeEventListener('pointermove', this.onMove)
+          canvas.removeEventListener('pointerup', this.onUp)
+          canvas.removeEventListener('pointercancel', this.onUp)
+          canvas.removeEventListener('lostpointercapture', this.onUp)
+          this.scene.renderer.render = this.renderSingle
+        }
+      })
+      document.querySelector('#viewer').setAttribute('cardboard-view', '')
+    })()
+  </script>
+
+</body>
+</html>
